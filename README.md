@@ -182,3 +182,10 @@ Built as a demonstration of GRC (Governance, Risk & Compliance) and Third-Party 
 <p align="center">
   <b>VendorGuard</b> — Simplifying Third-Party Risk Management
 </p>
+
+IMAGES
+
+<img width="1680" height="908" alt="image" src="https://github.com/user-attachments/assets/8aa1aa13-13b8-4de7-900e-965a51d73af8" />
+<img width="1584" height="893" alt="image" src="https://github.com/user-attachments/assets/a2d05444-16b8-4b5d-a928-38527bf8b611" />
+
+
