@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Risk Dashboard — ISO 27001 Risk Assessment & Management</title>
+    <meta name="description"
+        content="Professional third-party vendor risk assessment dashboard aligned with ISO 27001:2013 and NIST CSF for monitoring, scoring, and managing vendor security risks.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <i class="fa-solid fa-shield-halved brand-icon"></i>
+            <span class="brand-text">VendorGuard</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-link active" id="nav-dashboard" data-target="section-dashboard">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-link" id="nav-vendors" data-target="section-vendors">
+                <i class="fa-solid fa-building"></i>
+                <span>Vendors</span>
+            </a>
+            <a href="#" class="nav-link" id="nav-analytics" data-target="section-analytics">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Analytics</span>
+            </a>
+            <a href="#" class="nav-link" id="nav-reports" data-target="section-reports">
+                <i class="fa-solid fa-file-lines"></i>
+                <span>Reports</span>
+            </a>
+            <a href="settings.html" class="nav-link" id="nav-settings">
+                <i class="fa-solid fa-gear"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div class="user-details">
+                    <span class="user-name">Admin User</span>
+                    <span class="user-role">Risk Analyst</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="mobile-brand">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>VendorGuard</span>
+        </div>
+    </div>
+
+    <!-- Overlay for mobile sidebar -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <div class="top-bar-left">
+                <h1 class="page-title">Risk Dashboard</h1>
+                <p class="page-subtitle">Third-party vendor risk assessment — ISO 27001:2013 &amp; NIST CSF aligned</p>
+            </div>
+            <div class="top-bar-right">
+                <div class="search-box" id="searchBox">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search vendors...">
+                </div>
+                <button class="btn-export" id="exportCsvBtn" onclick="exportCSV()" title="Export to CSV">
+                    <i class="fa-solid fa-file-csv"></i>
+                    <span>Export CSV</span>
+                </button>
+                <div class="notification-wrapper">
+                    <div class="notification-bell" id="notificationBell" onclick="toggleNotifications()">
+                        <i class="fa-solid fa-bell"></i>
+                        <span class="notification-badge" id="notifBadge">2</span>
+                    </div>
+                    <div class="notification-panel" id="notificationPanel">
+                        <div class="notif-panel-header">
+                            <h3>Notifications</h3>
+                            <button class="notif-clear" onclick="clearNotifications()">Clear all</button>
+                        </div>
+                        <div class="notif-panel-body" id="notifList">
+                            <p class="notif-empty">No notifications</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ISO 27001 / NIST CSF Framework Banner -->
+        <section class="framework-banner" id="section-dashboard">
+            <div class="framework-tag" id="frameworkISO">
+                <i class="fa-solid fa-certificate"></i>
+                <span>ISO 27001:2013</span>
+                <span class="framework-control">Annex A.15 — Supplier Relationships</span>
+            </div>
+            <div class="framework-tag" id="frameworkNIST">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>NIST CSF</span>
+                <span class="framework-control">ID.SC — Supply Chain Risk Management</span>
+            </div>
+            <div class="framework-tag">
+                <i class="fa-solid fa-scale-balanced"></i>
+                <span>Risk Model</span>
+                <span class="framework-control">Inherent Risk = (Sensitivity + Access + Criticality) / 3</span>
+            </div>
+        </section>
+
+        <!-- Summary Cards -->
+        <section class="stats-grid" id="section-analytics">
+            <div class="stat-card card-total">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-building"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value" id="totalVendors">0</span>
+                    <span class="stat-label">Total Vendors</span>
+                </div>
+            </div>
+            <div class="stat-card card-high">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value" id="highRiskCount">0</span>
+                    <span class="stat-label">High Risk</span>
+                </div>
+            </div>
+            <div class="stat-card card-medium">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-exclamation-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value" id="mediumRiskCount">0</span>
+                    <span class="stat-label">Medium Risk</span>
+                </div>
+            </div>
+            <div class="stat-card card-low">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value" id="lowRiskCount">0</span>
+                    <span class="stat-label">Low Risk</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Two Column: Form + Chart -->
+        <section class="content-grid">
+            <!-- Add Vendor Form -->
+            <div class="panel form-panel">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-plus-circle"></i> Add New Vendor</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="vendorName">Vendor Name</label>
+                        <input type="text" id="vendorName" placeholder="e.g. Acme Corp">
+                    </div>
+                    <div class="form-group">
+                        <label for="serviceType">Service Type</label>
+                        <select id="serviceType">
+                            <option value="Cloud Hosting">Cloud Hosting</option>
+                            <option value="Payment Processor">Payment Processor</option>
+                            <option value="Customer Support">Customer Support</option>
+                            <option value="Email Service">Email Service</option>
+                            <option value="Data Analytics">Data Analytics</option>
+                            <option value="Security Provider">Security Provider</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dataSensitivity">Data Sensitivity</label>
+                            <select id="dataSensitivity">
+                                <option value="1">Low</option>
+                                <option value="2">Medium</option>
+                                <option value="3">High</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="accessLevel">Access Level</label>
+                            <select id="accessLevel">
+                                <option value="1">Low</option>
+                                <option value="2">Medium</option>
+                                <option value="3">High</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="businessCriticality">Business Criticality</label>
+                        <select id="businessCriticality">
+                            <option value="1">Low</option>
+                            <option value="2">Medium</option>
+                            <option value="3">High</option>
+                        </select>
+                    </div>
+
+                    <div class="form-section-divider">
+                        <span>Risk Treatment Plan</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="treatmentAction">Treatment Action <span class="label-ref">(ISO 27001
+                                §6.1.3)</span></label>
+                        <select id="treatmentAction">
+                            <option value="Mitigate">Mitigate</option>
+                            <option value="Accept">Accept</option>
+                            <option value="Transfer">Transfer</option>
+                            <option value="Avoid">Avoid</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="mitigationNotes">Mitigation / Action Notes</label>
+                        <textarea id="mitigationNotes" rows="2"
+                            placeholder="e.g. Require SOC 2 Type II report, enforce MFA..."></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reviewDate">Next Review Date</label>
+                            <input type="date" id="reviewDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="treatmentStatus">Status</label>
+                            <select id="treatmentStatus">
+                                <option value="Pending">Pending</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button class="btn-primary" id="addVendorBtn" onclick="addVendor()">
+                        <i class="fa-solid fa-shield-halved"></i> Calculate & Add Vendor
+                    </button>
+                    <p class="form-error" id="formError"></p>
+                </div>
+            </div>
+
+            <!-- Risk Chart -->
+            <div class="panel chart-panel">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-chart-pie"></i> Risk Distribution</h2>
+                </div>
+                <div class="panel-body chart-body">
+                    <canvas id="riskChart"></canvas>
+                    <p class="chart-empty" id="chartEmpty">Add vendors to see risk distribution</p>
+                </div>
+
+                <!-- ISO Controls Reference -->
+                <div class="controls-reference">
+                    <h3><i class="fa-solid fa-book-open"></i> Applicable Controls</h3>
+                    <div class="control-tags">
+                        <span class="control-tag"
+                            title="Information security policy for supplier relationships">A.15.1.1</span>
+                        <span class="control-tag" title="Addressing security within supplier agreements">A.15.1.2</span>
+                        <span class="control-tag" title="ICT supply chain">A.15.1.3</span>
+                        <span class="control-tag" title="Monitoring and review of supplier services">A.15.2.1</span>
+                        <span class="control-tag" title="Managing changes to supplier services">A.15.2.2</span>
+                        <span class="control-tag nist" title="Supply Chain Risk Management">ID.SC-1</span>
+                        <span class="control-tag nist" title="Identify and prioritize suppliers">ID.SC-2</span>
+                        <span class="control-tag nist" title="Supplier assessment and monitoring">ID.SC-4</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Vendor Table -->
+        <section class="panel table-panel" id="section-vendors">
+            <div class="panel-header">
+                <h2><i class="fa-solid fa-list"></i> Vendor Risk Registry</h2>
+                <span class="vendor-count" id="vendorCountBadge">0 vendors</span>
+            </div>
+            <div class="panel-body table-wrapper">
+                <table id="vendorTable">
+                    <thead>
+                        <tr>
+                            <th>Vendor</th>
+                            <th>Service Type</th>
+                            <th>Data Sensitivity</th>
+                            <th>Access Level</th>
+                            <th>Criticality</th>
+                            <th>Risk Score</th>
+                            <th>Risk Tier</th>
+                            <th>Treatment</th>
+                            <th>Status</th>
+                            <th>Review Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vendorTableBody"></tbody>
+                </table>
+                <div class="table-empty" id="tableEmpty">
+                    <i class="fa-solid fa-inbox"></i>
+                    <p>No vendors added yet. Use the form above to add your first vendor.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Risk Treatment Summary Panel -->
+        <section class="content-grid treatment-grid" id="section-reports">
+            <div class="panel treatment-panel">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-clipboard-check"></i> Risk Treatment Summary</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="treatment-stats">
+                        <div class="treatment-stat">
+                            <span class="treatment-stat-value" id="treatMitigate">0</span>
+                            <span class="treatment-stat-label">Mitigate</span>
+                        </div>
+                        <div class="treatment-stat">
+                            <span class="treatment-stat-value" id="treatAccept">0</span>
+                            <span class="treatment-stat-label">Accept</span>
+                        </div>
+                        <div class="treatment-stat">
+                            <span class="treatment-stat-value" id="treatTransfer">0</span>
+                            <span class="treatment-stat-label">Transfer</span>
+                        </div>
+                        <div class="treatment-stat">
+                            <span class="treatment-stat-value" id="treatAvoid">0</span>
+                            <span class="treatment-stat-label">Avoid</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel treatment-panel">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-spinner"></i> Treatment Status Overview</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="treatment-stats">
+                        <div class="treatment-stat">
+                            <span class="treatment-stat-value status-pending" id="statusPending">0</span>
+                            <span class="treatment-stat-label">Pending</span>
+                        </div>
+                        <div class="treatment-stat">
+                            <span class="treatment-stat-value status-progress" id="statusInProgress">0</span>
+                            <span class="treatment-stat-label">In Progress</span>
+                        </div>
+                        <div class="treatment-stat">
+                            <span class="treatment-stat-value status-completed" id="statusCompleted">0</span>
+                            <span class="treatment-stat-label">Completed</span>
+                        </div>
+                        <div class="treatment-stat">
+                            <span class="treatment-stat-value status-overdue" id="statusOverdue">0</span>
+                            <span class="treatment-stat-label">Overdue Reviews</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Edit Vendor Modal -->
+    <div class="modal-overlay" id="editModalOverlay">
+        <div class="modal" id="editModal">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-pen-to-square"></i> Edit Vendor</h2>
+                <button class="modal-close" onclick="closeEditModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editVendorId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editVendorName">Vendor Name</label>
+                        <input type="text" id="editVendorName">
+                    </div>
+                    <div class="form-group">
+                        <label for="editServiceType">Service Type</label>
+                        <select id="editServiceType">
+                            <option value="Cloud Hosting">Cloud Hosting</option>
+                            <option value="Payment Processor">Payment Processor</option>
+                            <option value="Customer Support">Customer Support</option>
+                            <option value="Email Service">Email Service</option>
+                            <option value="Data Analytics">Data Analytics</option>
+                            <option value="Security Provider">Security Provider</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editSensitivity">Data Sensitivity</label>
+                        <select id="editSensitivity">
+                            <option value="1">Low</option>
+                            <option value="2">Medium</option>
+                            <option value="3">High</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editAccess">Access Level</label>
+                        <select id="editAccess">
+                            <option value="1">Low</option>
+                            <option value="2">Medium</option>
+                            <option value="3">High</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editCriticality">Criticality</label>
+                        <select id="editCriticality">
+                            <option value="1">Low</option>
+                            <option value="2">Medium</option>
+                            <option value="3">High</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section-divider">
+                    <span>Risk Treatment</span>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editTreatment">Treatment Action</label>
+                        <select id="editTreatment">
+                            <option value="Mitigate">Mitigate</option>
+                            <option value="Accept">Accept</option>
+                            <option value="Transfer">Transfer</option>
+                            <option value="Avoid">Avoid</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editStatus">Status</label>
+                        <select id="editStatus">
+                            <option value="Pending">Pending</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editReviewDate">Review Date</label>
+                    <input type="date" id="editReviewDate">
+                </div>
+                <div class="form-group">
+                    <label for="editNotes">Mitigation / Action Notes</label>
+                    <textarea id="editNotes" rows="3" placeholder="Notes about treatment plan..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-reset" onclick="closeEditModal()">Cancel</button>
+                <button class="btn-save" onclick="saveVendorEdit()">
+                    <i class="fa-solid fa-check"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comments Modal -->
+    <div class="modal-overlay" id="commentModalOverlay">
+        <div class="modal modal-comments" id="commentModal">
+            <div class="modal-header">
+                <div>
+                    <h2><i class="fa-solid fa-comments"></i> Vendor Notes</h2>
+                    <p class="modal-vendor-name" id="commentVendorName"></p>
+                </div>
+                <button class="modal-close" onclick="closeCommentModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body comment-thread" id="commentThread">
+                <p class="notif-empty">No notes yet</p>
+            </div>
+            <div class="comment-input-area">
+                <input type="hidden" id="commentVendorId">
+                <textarea id="commentInput" rows="2" placeholder="Add a note or comment..."></textarea>
+                <button class="btn-comment-send" onclick="addComment()">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
