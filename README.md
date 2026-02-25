@@ -186,6 +186,9 @@ Built as a demonstration of GRC (Governance, Risk & Compliance) and Third-Party 
 IMAGES
 
 <img width="1680" height="908" alt="image" src="https://github.com/user-attachments/assets/8aa1aa13-13b8-4de7-900e-965a51d73af8" />
+<img width="1642" height="638" alt="image" src="https://github.com/user-attachments/assets/6a60d2c3-92a8-442e-bd67-584acb03cc0e" />
 <img width="1584" height="893" alt="image" src="https://github.com/user-attachments/assets/a2d05444-16b8-4b5d-a928-38527bf8b611" />
+
+
 
 
